@@ -129,7 +129,7 @@ triger = function (req, state, temperature) {
 		minT = 17.5;
 		maxT = 18.5;
 	}
-	else if(hours >= 22 && hours < 6){
+	else if(hours >= 22 || hours < 6){
 		minT = 20.2;
 		maxT = 20.7;
 	} 

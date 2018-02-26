@@ -33,8 +33,8 @@ var configDB = require('./config/database.js');
 app.use(
     connection(mysql, {
         host: 'localhost',
-        user: 'root',
-        password: '',
+        user: 'admin',
+        password: '2011988',
         port: 3306, //port mysql
         database: 'smart_house'
     }, 'single')

@@ -121,13 +121,17 @@ getState = function (req, callback) {
 },
 triger = function (req, state, temperature) {
     var newState = state,
-	minT = 20.8,
-	maxT = 21.5,
+	minT = 20.7,
+	maxT = 21.3,
 	hours = new Date().getHours();
 
 	if(hours >= 8 && hours < 16){
 		minT = 17.5;
 		maxT = 18.5;
+	}
+	else if(hours >= 22 && hours < 6){
+		minT = 20.2;
+		maxT = 20.7;
 	} 
 
     if (state === 0) {
@@ -138,7 +142,7 @@ triger = function (req, state, temperature) {
         
     }
     else {
-        if (temperature > maxT) {
+        if (temperature >= maxT) {
             request('http://192.168.0.52/off', function (error, response, body) { });
             newState = 0;
         }

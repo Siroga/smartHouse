@@ -19,6 +19,7 @@ void setup ( void ) {
 
   pinMode ( led, OUTPUT );
   pinMode(relayPin, OUTPUT);
+  digitalWrite(relayPin, HIGH);
   digitalWrite ( led, 0 );
   Serial.begin ( 115200 );
   WiFi.mode ( WIFI_STA );

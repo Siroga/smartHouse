@@ -79,7 +79,8 @@ exports.checkTriger = function (req, res) {
             }
             else {
                 request('http://192.168.0.52/on', function (error, response, body) { });
-                res.send(err);
+request('http://192.168.2.13/on', function (error, response, body) { });
+                //req.send(200);
 
             }
         });
@@ -100,6 +101,7 @@ var getTemp = function (callback) {
         if (!error && response.statusCode == 200) {
             return callback(null, body);
         } else {
+
             return callback(error, null);
         }
     });
@@ -125,18 +127,19 @@ triger = function (req, state, temperature) {
 	maxT = 21.3,
 	hours = new Date().getHours();
 
-	if(hours >= 8 && hours < 16){
-		minT = 17.5;
-		maxT = 18.5;
+	if(hours >= 9 && hours < 17){
+		minT = 18.5;
+		maxT = 19.5;
 	}
 	else if(hours >= 22 || hours < 6){
-		minT = 20.2;
+		minT = 20;
 		maxT = 20.7;
 	} 
 
     if (state === 0) {
         if (temperature <= minT) {
             request('http://192.168.0.52/on', function (error, response, body) { });
+	    request('http://192.168.2.13/on', function (error, response, body) { });
             newState = 1;
         }
         
@@ -144,6 +147,7 @@ triger = function (req, state, temperature) {
     else {
         if (temperature >= maxT) {
             request('http://192.168.0.52/off', function (error, response, body) { });
+            request('http://192.168.2.13/off', function (error, response, body) { });
             newState = 0;
         }
     }

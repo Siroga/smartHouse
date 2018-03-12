@@ -1,27 +1,23 @@
 module.exports = {
-	tableName: 'Logs',
+	tableName: 'logs',
 	attributes: {
 		id: {
 			type: 'integer',
 			columnName: 'id',
 			primaryKey: true,
-			uniqu: true
+			autoIncrement: true
 		},
 		deviceId: {
-			type: 'integer',
-			columnName: 'device_id'
+            columnName: 'device_id',
+		    model: 'device'
 		},
 		status: {
 			type: 'integer',
 			columnName: 'status'
-		},
-		dateTime: {
-			type: 'dateTime',
-			columnName: 'date_time'
-		},
+		}
 	},
 	autoCreatedAt: true,
-	autoUpdatedAt: true
+	autoUpdatedAt: false
 
 	
 };

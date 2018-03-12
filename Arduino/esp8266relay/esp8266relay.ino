@@ -1,15 +1,21 @@
 #include <ESP8266WiFi.h>
 //#include <WiFiClient.h>
 #include <ESP8266WebServer.h>
-                 // struct timeva
+// struct timeva
+#include <OneWire.h>
+#include <DallasTemperature.h>
+#include <ArduinoJson.h>
 
 const char *ssid = "siroga 2.4GHz";
 const char *password = "02011988";
 const int relayPin = D1;
-IPAddress ip(192, 168, 0, 52); //статический IP
-IPAddress gateway(192, 168, 0, 1);
-IPAddress subnet(255, 255, 255, 0);
+OneWire oneWire(13);
+DallasTemperature DS18B20(&oneWire);
 
+IPAddress ip(192, 168, 2, 10); //статический IP
+IPAddress gateway(192, 168, 0, 1);
+IPAddress subnet(255, 255, 0, 0);
+int state = 1;
 
 ESP8266WebServer server ( 80 );
 
@@ -26,7 +32,7 @@ void setup ( void ) {
   WiFi.begin ( ssid, password );
   WiFi.config(ip, gateway, subnet);
   Serial.println ( "" );
-  
+
   // Wait for connection
   while ( WiFi.status() != WL_CONNECTED ) {
     delay ( 500 );
@@ -38,10 +44,13 @@ void setup ( void ) {
   Serial.println ( ssid );
   Serial.print ( "IP address: " );
   Serial.println ( WiFi.localIP() );
+  DS18B20.begin();
 
   server.on ( "/", handleRoot );
   server.on ( "/on", handleOn );
   server.on ( "/off", handleOff );
+  server.on ( "/state", handleState );
+  server.on ( "/temp", handleTemp );
   server.onNotFound ( handleNotFound );
   server.begin();
   Serial.println ( "HTTP server started" );
@@ -51,15 +60,47 @@ void loop ( void ) {
   server.handleClient();
 }
 
+void handleTemp() {
+  DynamicJsonBuffer jsonBuffer;
+  float temp = getTemp(0);
+
+  String input =
+    "{\"value\":\"0\"}";
+  JsonObject& root = jsonBuffer.parseObject(input);
+  root["value"] = temp;
+
+  String output;
+  root.printTo(output);
+  server.send ( 200, "application/json", output );
+}
+
 void handleOn() {
   digitalWrite(relayPin, HIGH);
+  state = 1;
   server.send ( 200, "text/html", "on" );
 }
 
+
 void handleOff() {
   digitalWrite(relayPin, LOW);
-   server.send ( 200, "text/html", "off" );
+  state = 0;
+  server.send ( 200, "text/html", "off" );
 }
+
+void handleState() {
+  DynamicJsonBuffer jsonBuffer;
+float temp = getTemp(0);
+  String input =
+    "{\"value\":\"0\"}";
+  JsonObject& root = jsonBuffer.parseObject(input);
+  root["state"] = state;
+  root["value"] = temp;
+
+  String output;
+  root.printTo(output);
+  server.send ( 200, "application/json", output );
+}
+
 
 
 void handleRoot() {
@@ -67,7 +108,8 @@ void handleRoot() {
   int sec = millis() / 1000;
   int min = sec / 60;
   int hr = min / 60;
-  float temp = 0;
+
+  float temp = getTemp(0);
   String output = "<html>\
   <head>\
     <meta http-equiv='refresh' content='5'/>\
@@ -77,7 +119,8 @@ void handleRoot() {
     </style>\
   </head>\
   <body>\
- <p>" + String(temp) + "</p>\
+ <p>" + String(state) + "</p>\
+  <p>" + String(temp) + "</p>\
  </body>\
 </html>";
   server.send ( 200, "text/html", output );
@@ -104,3 +147,18 @@ void handleNotFound() {
   digitalWrite ( led, 0 );
 }
 
+float getTemp(int index) {
+  if ( DS18B20.isParasitePowerMode() ) {
+    Serial.println("ON");
+  } else {
+    Serial.println("OFF");
+  }
+  int numberOfDevices = DS18B20.getDeviceCount();
+
+  if (index > numberOfDevices) {
+    return -127;
+  }
+  DS18B20.requestTemperatures();
+  
+  return DS18B20.getTempCByIndex(index);
+}

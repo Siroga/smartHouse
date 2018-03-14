@@ -42,10 +42,10 @@ module.exports.connections = {
   ***************************************************************************/
    mysqldb: {
      adapter: 'sails-mysql',
-     host: 'localhost',
-     user: 'root', //optional
-     password: '', //optional
-     database: 'smart_house_new' //optional
+     host: 'aginteri.mysql.tools',
+     user: 'aginteri_smart', //optional
+     password: 'j8m88s7e', //optional
+     database: 'aginteri_smart' //optional
    },
 
   /***************************************************************************

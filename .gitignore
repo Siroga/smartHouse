@@ -28,3 +28,5 @@ Web/node_modules
 
 # Debug log from npm
 Web/npm-debug.log
+/HTML/AngularJS_Full_Version-old/bower_components
+/HTML/AngularJS_Full_Version-old/node_modules

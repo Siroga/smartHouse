@@ -22,9 +22,10 @@ module.exports = {
             Services.getBoilerState(function (value) {
                 console.log(value);
             });
-            Services.getTemperature(finn.ip, function (value) {
-                res.send(value);
-            });
+
+            //Services.getTemperature(finn.ip, function (value) {
+            //    res.send(value);
+            //});
 
 
 
